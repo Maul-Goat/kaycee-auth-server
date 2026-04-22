@@ -374,6 +374,8 @@
                 const dashRes = await fetch(`${API_BASE}/api/admin/dashboard?key=${API_KEY}`);
                 const dashData = await dashRes.json();
 
+                console.log('Dashboard response:', dashData);
+
                 if (dashData.success) {
                     document.getElementById('totalUsers').textContent = dashData.stats.total_users || 0;
                     document.getElementById('activeToday').textContent = dashData.stats.active_today || 0;
@@ -382,34 +384,38 @@
 
                     // Display users
                     const userList = document.getElementById('userList');
-                    userList.innerHTML = '';
-                    
-                    dashData.users.slice(0, 10).forEach(user => {
-                        const userItem = document.createElement('div');
-                        userItem.className = 'user-item';
-                        userItem.innerHTML = `
-                            <div class="user-info">
-                                <div class="user-avatar">${user.username.charAt(1).toUpperCase()}</div>
-                                <div class="user-details">
-                                    <h4>${user.username}</h4>
-                                    <p>${user.device_id || 'No device'}</p>
+                    if (dashData.users && dashData.users.length > 0) {
+                        userList.innerHTML = '';
+                        dashData.users.slice(0, 10).forEach(user => {
+                            const initial = (user.username || '?').replace('@','').charAt(0).toUpperCase();
+                            const userItem = document.createElement('div');
+                            userItem.className = 'user-item';
+                            userItem.innerHTML = `
+                                <div class="user-info">
+                                    <div class="user-avatar" style="${user.avatar ? `background:url('${user.avatar}') center/cover; color:transparent;` : ''}">${user.avatar ? '' : initial}</div>
+                                    <div class="user-details">
+                                        <h4>${user.username}</h4>
+                                        <p>${user.last_login ? new Date(user.last_login).toLocaleString() : 'Never logged in'}</p>
+                                    </div>
                                 </div>
-                            </div>
-                            <span class="badge ${user.is_banned ? 'badge-banned' : 'badge-active'}">
-                                ${user.is_banned ? 'Banned' : 'Active'}
-                            </span>
-                        `;
-                        userList.appendChild(userItem);
-                    });
+                                <span class="badge ${user.is_banned ? 'badge-banned' : 'badge-active'}">
+                                    ${user.is_banned ? 'Banned' : 'Active'}
+                                </span>
+                            `;
+                            userList.appendChild(userItem);
+                        });
+                    } else {
+                        userList.innerHTML = '<div class="loading">No users found.</div>';
+                    }
+                } else {
+                    showToast('Dashboard error: ' + (dashData.error || 'Unknown'), 'error');
+                    console.error('Dashboard error:', dashData);
                 }
 
                 // Get system status
-                const sysRes = await fetch(`${API_BASE}/api/admin/system`, {
+                const sysRes = await fetch(`${API_BASE}/api/admin/system?key=${API_KEY}`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Admin-Key': API_KEY
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ action: 'get_status' })
                 });
                 const sysData = await sysRes.json();
@@ -420,7 +426,7 @@
 
             } catch (err) {
                 console.error('Fetch error:', err);
-                showToast('Failed to load data', 'error');
+                showToast('Failed to load data: ' + err.message, 'error');
             }
         }
 
