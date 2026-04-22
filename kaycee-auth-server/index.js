@@ -28,7 +28,7 @@ app.use('/api/check_shield', require('./api/check_shield'));
 app.use('/api/analyze', require('./api/analyze'));
 app.use('/api/version', require('./api/version'));
 app.use('/api/system_status', require('./api/system_status'));
-app.use('/api/get_bypass_config', require('./api/get_bypass_config'));
+//app.use('/api/get_bypass_config', require('./api/get_bypass_config'));
 
 // Admin Routes
 app.use('/api/admin/dashboard', require('./api/admin/dashboard'));
