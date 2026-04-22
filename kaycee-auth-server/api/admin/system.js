@@ -1,7 +1,4 @@
-/**
- * /api/admin/system.js
- * POST /api/admin/system - Lock/Unlock system remotely
- */
+
 const { query, isAdmin, handleCors } = require('../../lib/db');
 
 module.exports = async (req, res) => {
