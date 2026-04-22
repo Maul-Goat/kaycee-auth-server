@@ -1,0 +1,11 @@
+name = "kaycee-auth-server"
+main = "index.js"
+compatibility_date = "2024-01-01"
+
+[vars]
+NODE_ENV = "production"
+
+# Database connection akan di-set via secrets
+# wrangler secret put DATABASE_URL
+# wrangler secret put ADMIN_KEY
+# wrangler secret put TIKTOK_API_URL

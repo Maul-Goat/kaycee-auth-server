@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kaycee Admin Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card h3 {
+            color: #999;
+            font-size: 14px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .value {
+            font-size: 36px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .control-panel {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .control-panel h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .system-status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.active {
+            background: #10b981;
+        }
+
+        .status-dot.locked {
+            background: #ef4444;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .status-text {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .status-text.active {
+            color: #10b981;
+        }
+
+        .status-text.locked {
+            color: #ef4444;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+
+        .btn-lock {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-lock:hover {
+            background: #dc2626;
+            transform: scale(1.05);
+        }
+
+        .btn-unlock {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-unlock:hover {
+            background: #059669;
+            transform: scale(1.05);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .message-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 15px;
+            font-family: inherit;
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .users-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .users-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .user-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #667eea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .user-details h4 {
+            color: #333;
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+
+        .user-details p {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-banned {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .badge-active {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            display: none;
+            animation: slideIn 0.3s;
+        }
+
+        .toast.show {
+            display: block;
+        }
+
+        .toast.success {
+            border-left: 4px solid #10b981;
+        }
+
+        .toast.error {
+            border-left: 4px solid #ef4444;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎮 Kaycee Admin Dashboard</h1>
+            <p>Remote System Control & User Management</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Users</h3>
+                <div class="value" id="totalUsers">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>Active Today</h3>
+                <div class="value" id="activeToday">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>Banned Users</h3>
+                <div class="value" id="bannedUsers">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>New This Week</h3>
+                <div class="value" id="newThisWeek">-</div>
+            </div>
+        </div>
+
+        <div class="control-panel">
+            <h2>🔐 System Control</h2>
+            <div class="system-status">
+                <div class="status-indicator">
+                    <div class="status-dot active" id="statusDot"></div>
+                    <span class="status-text active" id="statusText">System Active</span>
+                </div>
+                <button class="btn btn-lock" id="toggleBtn" onclick="toggleSystem()">Lock System</button>
+            </div>
+            <textarea 
+                class="message-input" 
+                id="lockMessage" 
+                placeholder="Lock message (shown to users when system is locked)..."
+                rows="3"
+            >System is under maintenance. Please try again later.</textarea>
+        </div>
+
+        <div class="users-section">
+            <h2>👥 Recent Users</h2>
+            <div class="user-list" id="userList">
+                <div class="loading">Loading users...</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const API_KEY = new URLSearchParams(window.location.search).get('key');
+        const API_BASE = window.location.origin;
+        let currentStatus = 'active';
+
+        if (!API_KEY) {
+            alert('Admin key required! Add ?key=YOUR_ADMIN_KEY to URL');
+        }
+
+        async function fetchData() {
+            try {
+                // Get dashboard data
+                const dashRes = await fetch(`${API_BASE}/api/admin/dashboard?key=${API_KEY}`);
+                const dashData = await dashRes.json();
+
+                if (dashData.success) {
+                    document.getElementById('totalUsers').textContent = dashData.stats.total_users || 0;
+                    document.getElementById('activeToday').textContent = dashData.stats.active_today || 0;
+                    document.getElementById('bannedUsers').textContent = dashData.stats.banned_users || 0;
+                    document.getElementById('newThisWeek').textContent = dashData.stats.new_this_week || 0;
+
+                    // Display users
+                    const userList = document.getElementById('userList');
+                    userList.innerHTML = '';
+                    
+                    dashData.users.slice(0, 10).forEach(user => {
+                        const userItem = document.createElement('div');
+                        userItem.className = 'user-item';
+                        userItem.innerHTML = `
+                            <div class="user-info">
+                                <div class="user-avatar">${user.username.charAt(1).toUpperCase()}</div>
+                                <div class="user-details">
+                                    <h4>${user.username}</h4>
+                                    <p>${user.device_id || 'No device'}</p>
+                                </div>
+                            </div>
+                            <span class="badge ${user.is_banned ? 'badge-banned' : 'badge-active'}">
+                                ${user.is_banned ? 'Banned' : 'Active'}
+                            </span>
+                        `;
+                        userList.appendChild(userItem);
+                    });
+                }
+
+                // Get system status
+                const sysRes = await fetch(`${API_BASE}/api/admin/system`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Admin-Key': API_KEY
+                    },
+                    body: JSON.stringify({ action: 'get_status' })
+                });
+                const sysData = await sysRes.json();
+
+                if (sysData.success) {
+                    updateSystemStatus(sysData.status, sysData.message);
+                }
+
+            } catch (err) {
+                console.error('Fetch error:', err);
+                showToast('Failed to load data', 'error');
+            }
+        }
+
+        function updateSystemStatus(status, message) {
+            currentStatus = status;
+            const statusDot = document.getElementById('statusDot');
+            const statusText = document.getElementById('statusText');
+            const toggleBtn = document.getElementById('toggleBtn');
+            const lockMessage = document.getElementById('lockMessage');
+
+            if (status === 'locked') {
+                statusDot.className = 'status-dot locked';
+                statusText.className = 'status-text locked';
+                statusText.textContent = 'System Locked';
+                toggleBtn.className = 'btn btn-unlock';
+                toggleBtn.textContent = 'Unlock System';
+                if (message) lockMessage.value = message;
+            } else {
+                statusDot.className = 'status-dot active';
+                statusText.className = 'status-text active';
+                statusText.textContent = 'System Active';
+                toggleBtn.className = 'btn btn-lock';
+                toggleBtn.textContent = 'Lock System';
+            }
+        }
+
+        async function toggleSystem() {
+            const action = currentStatus === 'active' ? 'lock' : 'unlock';
+            const message = document.getElementById('lockMessage').value;
+            const toggleBtn = document.getElementById('toggleBtn');
+
+            toggleBtn.disabled = true;
+
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/system`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Admin-Key': API_KEY
+                    },
+                    body: JSON.stringify({ action, message })
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    updateSystemStatus(data.status, message);
+                    showToast(data.message, 'success');
+                } else {
+                    showToast(data.error || 'Failed to toggle system', 'error');
+                }
+
+            } catch (err) {
+                console.error('Toggle error:', err);
+                showToast('Failed to toggle system', 'error');
+            } finally {
+                toggleBtn.disabled = false;
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type} show`;
+            setTimeout(() => {
+                toast.className = 'toast';
+            }, 3000);
+        }
+
+        // Initial load
+        fetchData();
+
+        // Refresh every 10 seconds
+        setInterval(fetchData, 10000);
+    </script>
+</body>
+</html>
