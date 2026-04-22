@@ -16,6 +16,11 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static files (admin.html, etc)
 app.use(express.static('public'));
 
+// Admin HTML route
+app.get('/admin.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+});
+
 // API Routes
 app.use('/api/login', require('./api/login'));
 app.use('/api/log', require('./api/log'));
